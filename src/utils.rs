@@ -1,20 +1,26 @@
 use std::path::Path;
+use std::str::FromStr;
 use clap::Parser;
 
 
-
-
+#[derive(Debug)]
+pub enum OutPutFormat{
+    Json,Yaml,Csv,Tsv,
+}
 #[derive(Parser,Debug)]
 pub struct CsvOpts{
     // 检查文件是否存在
     #[arg(short, long, value_parser = verify_file)]
     pub input:String,
-    #[arg(short,long,default_value="out.json")]
-    pub output:String,
+    #[arg(short,long, )]
+    pub output:Option<String>,
     #[arg(short,long,default_value = ",")]
-    pub(crate) delimiter:String,
+    pub  delimiter:String,
     #[arg(long, default_value_t = true)]
-    pub(crate) header:bool,
+    pub  header:bool,
+    #[arg(long, short,value_parser=verify_format,default_value = "json")]
+    pub format :OutPutFormat,
+
 
 
 }
@@ -45,4 +51,33 @@ fn verify_file(input: &str) -> Result<String,&'static str> {
     }else {
         Err("file does not exist" )
     }
+}
+
+// 检查是否支持该格式转换
+fn verify_format(input: &str) -> Result<OutPutFormat,anyhow::Error> {
+    // parse need to realize FromStr trait
+    input.parse::<OutPutFormat>()
+}
+
+// 实现特征
+impl From<OutPutFormat> for &'static str {
+    fn from(format: OutPutFormat) -> Self {
+        match format {
+            OutPutFormat::Json => "json",
+            OutPutFormat::Yaml => "yaml",
+            OutPutFormat::Csv => "csv",
+            OutPutFormat::Tsv => "tsv",
+        }
+    }
+}
+impl FromStr for OutPutFormat {
+    type Err =anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "json" => Ok(OutPutFormat::Json),
+            "yaml" => Ok(OutPutFormat::Yaml),
+            "csv" => Ok(OutPutFormat::Csv),
+            "tsv" => Ok(OutPutFormat::Tsv),
+            _ => Err(anyhow::anyhow!("Invalid format: {}", s)),
+    }}
 }

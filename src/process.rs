@@ -1,9 +1,11 @@
-use std::ffi::CString;
+
 use std::fs;
 use csv::{Reader,StringRecord,};
 use std::path::Path;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize };
 use anyhow;
+use zxcvbn::matching::patterns::MatchPattern::Regex;
+use crate::OutPutFormat;
 
 //  Deserialize, Serialize 意思是支持序列化核反序列化
 // #[derive(Debug, Deserialize, Serialize)]
@@ -19,7 +21,7 @@ use anyhow;
 // }
 //
 
-pub fn process_csv(input:&str,ouput: &str)  -> anyhow::Result<()>   {
+pub fn process_csv(input:&str,ouput: &str,format:OutPutFormat)  -> anyhow::Result<()>   {
     let mut reader = Reader::from_path(Path::new(input)).unwrap();
     let mut ret = Vec::with_capacity(128);
     let header:StringRecord= reader.header()?.clone();
