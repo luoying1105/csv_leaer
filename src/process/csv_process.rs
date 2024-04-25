@@ -1,7 +1,8 @@
 use regex::Regex;
 use std::fs;
-use csv::{Reader,StringRecord};
+use csv::{Reader,StringRecord,Writer};
 use std::path::Path;
+use std::io;
 use anyhow;
  
 use crate::OutPutFormat;
@@ -48,13 +49,13 @@ pub fn process_csv(input:&str,ouput:String,format:OutPutFormat)  -> anyhow::Resu
             fs::write(ouput, yaml)?;
         },
         OutPutFormat::Csv=>{
-            let mut writer = serde_csv_core::Writer::new();
-            let mut csv = [0; 128];
-            let mut nwritten = 0;
+            //let mut writer =Writer::from_writer(vec![]);
+            //for  record in ret {
+            //    writer.write_record(&record.as_array().unwrap().iter().map(|v| remove_special_characters(v.as_str().unwrap())));
 
-            for record in  &ret {
-                nwritten += writer.serialize_to_slice(&record, &mut csv[nwritten..])?;
-            }
+
+            //}as_str
+           // fs::write(ouput,writer.into_inner().unwrap());unwrap
 
         },
 

@@ -5,6 +5,7 @@ use std::str::FromStr;
 use clap::Parser;
 
 
+
 #[derive(Debug,Copy, Clone)]
 pub enum OutPutFormat{
     Json,Yaml,Csv,
@@ -32,7 +33,24 @@ pub struct CsvOpts{
 pub enum SubCommands{
     #[command(name="csv",about="conver csv to json")]
     Csv(crate::CsvOpts),
+    #[command(name="genpass",about="generate a random password")]
+    GenPass(crate::GenPassOpts),
+    
 
+}
+
+#[derive(Debug,Parser)]
+pub struct GenPassOpts {
+    #[arg(long,default_value = "8")]
+    pub length: u8,
+    #[arg(long,default_value_t = true)]
+    pub uppercase:bool,
+    #[arg(long,default_value_t =true)]
+    pub lowercase:bool,
+    #[arg(long,default_value_t =true)]
+    pub numbers:bool,
+    #[arg(long,default_value_t =false)]
+    pub symbols:bool,
 }
 
 #[derive(Parser,Debug)]
@@ -40,6 +58,7 @@ pub enum SubCommands{
 pub struct Opts {
     #[command(subcommand)]
     pub cmd: crate::SubCommands,
+    pub genpass:GenPassOpts,
 
 }
 
