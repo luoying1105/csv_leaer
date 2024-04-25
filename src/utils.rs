@@ -1,11 +1,13 @@
+use std::fmt;
+use std::fmt::{Formatter};
 use std::path::Path;
 use std::str::FromStr;
 use clap::Parser;
 
 
-#[derive(Debug)]
+#[derive(Debug,Copy, Clone)]
 pub enum OutPutFormat{
-    Json,Yaml,Csv,Tsv,
+    Json,Yaml,Csv,
 }
 #[derive(Parser,Debug)]
 pub struct CsvOpts{
@@ -59,14 +61,15 @@ fn verify_format(input: &str) -> Result<OutPutFormat,anyhow::Error> {
     input.parse::<OutPutFormat>()
 }
 
-// 实现特征
+// 实现特征 就是self.into
+// rust 下面实现了from 就是实现了into
 impl From<OutPutFormat> for &'static str {
     fn from(format: OutPutFormat) -> Self {
         match format {
             OutPutFormat::Json => "json",
             OutPutFormat::Yaml => "yaml",
             OutPutFormat::Csv => "csv",
-            OutPutFormat::Tsv => "tsv",
+
         }
     }
 }
@@ -77,7 +80,14 @@ impl FromStr for OutPutFormat {
             "json" => Ok(OutPutFormat::Json),
             "yaml" => Ok(OutPutFormat::Yaml),
             "csv" => Ok(OutPutFormat::Csv),
-            "tsv" => Ok(OutPutFormat::Tsv),
+           
             _ => Err(anyhow::anyhow!("Invalid format: {}", s)),
     }}
+}
+
+impl fmt::Display for OutPutFormat {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+       //  实现from 就是实现into
+       write!(f, "{}", Into::<&str>::into(*self))
+    }
 }

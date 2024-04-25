@@ -13,7 +13,18 @@ fn main() -> anyhow::Result<()> {
     println!("Hello, world!");
     let opts:Opts = Opts::parse();
     match opts.cmd {
-        SubCommands::Csv(csv_opts) => process_csv(&csv_opts.input,&csv_opts.output)
+        // 如果output有值就用,没有给个默认值
+
+        SubCommands::Csv(csv_opts) => {
+            let output  = if let Some(output ) = csv_opts.output{
+                output.clone()
+            }else {
+              //   impl fmt::Display for OutPutFormat  实现了才会有Display
+              format!("output.{}",csv_opts.format)
+            };
+
+            Ok(process_csv(&csv_opts.input, output, csv_opts.format)?)
+        }
     }
 
 }
