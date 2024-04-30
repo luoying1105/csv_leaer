@@ -16,25 +16,21 @@ fn main() -> anyhow::Result<()> {
         // 如果output有值就用,没有给个默认值
 
         SubCommands::Csv(csv_opts) => {
-            let output  = if let Some(output ) = csv_opts.output{
-                output.clone()
-            }else {
-              //   impl fmt::Display for OutPutFormat  实现了才会有Display
-              format!("output.{}",csv_opts.format)
-            };
+            let output = if let Some(output) = csv_opts.output {
+                    output.clone()
+                } else {
+                    format!("output.{}",csv_opts.format)
+                };
+                process_csv(&csv_opts.input, output, csv_opts.format)?;
+          
 
-            Ok(process_csv(&csv_opts.input, output, csv_opts.format)?)
+            // Ok(process_csv(&csv_opts.input, output, csv_opts.format)?)
         }
-        SubCommands::GenPass(opts)  => {
-            process_genpassword(
-                opts.length,
-                opts.uppercase,
-                opts.lowercase,
-                opts.numbers,
-                opts.symbols,
-            )
+        SubCommands::GenPass(gen_opts) => {
+            process_genpass(gen_opts.length,gen_opts.uppercase,gen_opts.lowercase,
+                            gen_opts.numbers,gen_opts.symbols);
 
         }
     }
-
+    Ok(())
 }

@@ -58,8 +58,7 @@ pub struct GenPassOpts {
 pub struct Opts {
     #[command(subcommand)]
     pub cmd: crate::SubCommands,
-    pub genpass:GenPassOpts,
-
+ 
 }
 
 
